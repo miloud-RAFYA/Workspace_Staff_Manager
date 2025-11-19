@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Office Space Manager</title>
+    <link rel="stylesheet" href="../Style/styles.css">
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h1>Space Manager</h1>
+            </div>
+            <div class="unassigned-section">
+                <h2> Unassigned Staff</h2>
+                <button class="btn btn-primary" id="addWorkerBtn">
+                    <img width="32" height="32" src="https://img.icons8.com/windows/32/add--v1.png" alt="add--v1" />
+                    Add New Worker
+                </button>
+                <div class="staff-list" id="unassignedStaffList">
+                    <!-- Employés non assignés générés dynamiquement -->
+                </div>
+            </div>
+        </aside>
+
+        <!-- Zone principale -->
+        <main class="main-content">
+            <div class="office-grid">
+                <!-- Salle de conférence -->
+                 <div class="div1">
+                <div class="zone conference-room" data-zone="conference">
+                    <div class="zone-header">
+                        <h3> Salle de conference</h3>
+                        <button class="btn-add" data-zone="conference"> <img width="32" height="32"
+                                src="https://img.icons8.com/windows/32/add--v1.png" alt="add--v1" /></button>
+                    </div>
+                    <div class="zone-content" id="conference-staff">
+                        <!-- Employés de cette zone -->
+                    </div>
+                </div>
+
+                <!-- Réception -->
+                <div class="zone reception required-zone" data-zone="reception">
+                    <div class="zone-header">
+                        <h3> Reception</h3>
+                        <button class="btn-add" data-zone="reception"> <img width="32" height="32"
+                                src="https://img.icons8.com/windows/32/add--v1.png" alt="add--v1" /> </button>
+                    </div>
+                    <div class="zone-content" id="reception-staff">
+                        <!-- Employés de cette zone -->
+                    </div>
+                </div>
+                </div>
+                <div class="div2">
+                    <div class="div3">
+                <!-- Salle de sécurité -->
+                <div class="zone security-room required-zone" data-zone="security">
+                    <div class="zone-header">
+                        <h3>Salle de sécurité</h3>
+                        <button class="btn-add" data-zone="security"> <img width="32" height="32"
+                                src="https://img.icons8.com/windows/32/add--v1.png" alt="add--v1" /></button>
+                    </div>
+                    <div class="zone-content" id="security-staff">
+                        <!-- Employés de cette zone -->
+                    </div>
+                </div>
+                  <!-- Salle des serveurs -->
+                <div class="zone server-room" data-zone="server">
+                    <div class="zone-header">
+                        <h3>Salle des serveurs</h3>
+                        <button class="btn-add" data-zone="server"> <img width="32" height="32"
+                                src="https://img.icons8.com/windows/32/add--v1.png" alt="add--v1" /></button>
+                    </div>
+                    <div class="zone-content" id="server-staff">
+                        <!-- Employés de cette zone -->
+                    </div>
+                </div>
+               
+                </div>
+                <div class="div4">
+                 <!-- Salle du personnel -->
+                <div class="zone staff-room" data-zone="staff">
+                    <div class="zone-header">
+                        <h3>Salle du personnel</h3>
+                        <button class="btn-add" data-zone="staff"> <img width="32" height="32"
+                                src="https://img.icons8.com/windows/32/add--v1.png" alt="add--v1" /></button>
+                    </div>
+                    <div class="zone-content" id="staff-room-staff">
+                        <!-- Employés de cette zone -->
+                    </div>
+                </div>
+                <!-- Salle d'archives -->
+                <div class="zone archive-room" data-zone="archive">
+                    <div class="zone-header">
+                        <h3>Salle d'archives</h3>
+                        <button class="btn-add" data-zone="archive"> <img width="32" height="32"
+                                src="https://img.icons8.com/windows/32/add--v1.png" alt="add--v1" /></button>
+                    </div>
+                    <div class="zone-content" id="archive-staff">
+                        <!-- Employés de cette zone -->
+                    </div>
+                </div>
+                </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modale d'ajout d'employé -->
+    <div class="modal-overlay" id="addEmployeeModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2> New Employee</h2>
+                <button class="btn-close" id="closeModalBtn">✕</button>
+            </div>
+
+            <form class="employee-form" id="employeeForm">
+                <div class="form-group">
+                    <label for="employeeName">Nom complet </label>
+                    <input type="text" id="employeeName" name="name" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="employeeRole">Role </label>
+                    <select id="employeeRole" name="role" required>
+                        <option value="">Selectionnez un role</option>
+                        <option value="manager">Manager</option>
+                        <option value="receptionist"> Receptionniste</option>
+                        <option value="technician"> Technicien IT</option>
+                        <option value="security"> Agent de securite</option>
+                        <option value="cleaner">Nettoyage</option>
+                        <option value="other">Autre</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="employeeEmail">Email </label>
+                    <input type="email" id="employeeEmail" name="email" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="employeePhone">Telephone</label>
+                    <input type="tel" id="employeePhone" name="phone">
+                </div>
+
+                <div class="form-group">
+                    <label for="employeePhoto">Votre Photo</label>
+                    <input type="url" id="employeePhoto" name="photo" placeholder="https://example.com/photo.jpg">
+                    <div class="photo-preview" id="photoPreview">
+
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Experiences professionnelles</label>
+                    <div class="experiences-container" id="experiencesContainer">
+                        <div class="experience-input">
+                            <input type="text" name="experiences[]" placeholder="Ex: Developpeur Front-End - 2 ans">
+                             <button type="button" class="btn-add-experience" id="addExperienceBtn">Add</button>
+                        </div>
+                        <div class="content-experience" id="content-experience">
+                            
+                        </div>
+                    </div>
+                   
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" id="cancelBtn">Annuler</button>
+                    <button type="submit" class="btn btn-primary"id="addEmployerBtn">Ajouter l'employe</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modale de profil employé -->
+    <div class="modal-overlay" id="employeeProfileModal">
+        <div class="modal profile-modal">
+            <div class="modal-header">
+                <h2 id="profileName">Profil Employé</h2>
+                <button class="btn-close" id="closeProfileModalBtn">✕</button>
+            </div>
+
+            <div class="profile-content">
+                <div class="profile-photo">
+                    <img id="profilePhoto" src="" alt="Photo employé">
+                </div>
+
+                <div class="profile-info">
+                    <div class="info-item">
+                        <strong>Rôle:</strong>
+                        <span id="profileRole"></span>
+                    </div>
+                    <div class="info-item">
+                        <strong>Email:</strong>
+                        <span id="profileEmail"></span>
+                    </div>
+                    <div class="info-item">
+                        <strong>Téléphone:</strong>
+                        <span id="profilePhone"></span>
+                    </div>
+                    <div class="info-item">
+                        <strong>Localisation actuelle:</strong>
+                        <span id="profileLocation"></span>
+                    </div>
+                </div>
+
+                <div class="profile-experiences">
+                    <h3>Expériences professionnelles</h3>
+                    <ul id="profileExperiences"></ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modale de sélection d'employé pour une zone -->
+    <div class="modal-overlay" id="zoneAssignmentModal">
+        <div class="modal assignment-modal">
+            <div class="modal-header">
+                <h2 id="assignmentTitle">Assigner à la zone</h2>
+                <button class="btn-close" id="closeAssignmentModalBtn">✕</button>
+            </div>
+
+            <div class="assignment-content">
+                <div class="eligible-employees" id="eligibleEmployeesList">
+                    <!-- Liste des employés éligibles générée dynamiquement -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../JS/script.js"></script>
+</body>
+
+</html>
