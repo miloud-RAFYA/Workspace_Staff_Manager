@@ -5,16 +5,92 @@ let addExperienceBtn = document.getElementById("addExperienceBtn");
 let employeeForm = document.getElementById("employeeForm");
 let addEmployerBtn = document.getElementById("addEmployerBtn");
 let employeeProfileModal = document.getElementById("employeeProfileModal");
+let conferenceStaff = document.getElementById("conference-staff");
+let eligibleEmployeesList = document.getElementById("eligibleEmployeesList");
+let zoneAssignmentModal =document.getElementById("zoneAssignmentModal");
+console.log(eligibleEmployeesList)
 // les varaibles main
 let btnAddZone = document.getElementsByClassName("btn-add");
-let btnZoneContent = document.getElementsByClassName("btn-add");
+let containrZone={
+  
+}
+
 // les arrayers
 var workers = {};
 var experiences = [];
 const workerKy = "worker";
 
 var idMd;
+function errorValidat() {
+  const name = document.getElementById("employeeName");
+  const role = document.getElementById("employeeRole");
+  const email = document.getElementById("employeeEmail");
+  const photo = document.getElementById("employeePhoto");
+  const phone = document.getElementById("employeePhone");
+  name.style.border = "";
+  role.style.border = "";
+  email.style.border = "";
+  photo.style.border = "";
+  phone.style.border = "";
+  removeErrorMessages();
+  const validations = {
+    name: /^[a-zA-ZÀ-ÿ\s\-']{2,50}$/.test(name.value.trim()),
+    role: /^(developer|designer|manager)$/.test(role.value),
+    email: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email.value),
+    photo:
+      /^(https?:\/\/.*\.(jpg|jpeg|png|gif|webp)|.*\.(jpg|jpeg|png|gif|webp))$/i.test(
+        photo.value
+      ),
+    phone: /^(?:(?:\+|00)33|0)[1-9](?:[\s.-]*\d{2}){4}$/.test(phone.value),
+  };
 
+  const errorMessages = {
+    name: "Le nom doit contenir 2 à 50 caractères alphabétiques",
+    role: "Veuillez sélectionner un rôle valide",
+    email: "Format d'email invalide (ex: exemple@domaine.com)",
+    photo: "URL ou nom de fichier image invalide (jpg, jpeg, png, gif, webp)",
+    phone:
+      "Format de téléphone français invalide (ex: 0123456789 ou +33123456789)",
+  };
+
+  let isValid = Object.values(validations).every((valid) => valid);
+
+  if (isValid) {
+    return true;
+  } else {
+    if (!validations.name) {
+      showError(name, errorMessages.name);
+    }
+    if (!validations.role) {
+      showError(role, errorMessages.role);
+    }
+    if (!validations.email) {
+      showError(email, errorMessages.email);
+    }
+    if (!validations.photo) {
+      showError(photo, errorMessages.photo);
+    }
+    if (!validations.phone) {
+      showError(phone, errorMessages.phone);
+    }
+    return false;
+  }
+}
+function showError(input, message) {
+  input.style.border = "1px solid red";
+  const errorElement = document.createElement("span");
+  errorElement.className = "error-message";
+  errorElement.style.color = "red";
+  errorElement.style.fontSize = "12px";
+  errorElement.style.display = "block";
+  errorElement.style.marginTop = "5px";
+  errorElement.textContent = message;
+  input.parentNode.appendChild(errorElement);
+}
+function removeErrorMessages() {
+  const errorMessages = document.querySelectorAll(".error-message");
+  errorMessages.forEach((error) => error.remove());
+}
 // localStorage.removeItem(workerKy)
 // les cours des fonctions
 function getData() {
@@ -41,12 +117,18 @@ function closeModalworker() {
   });
   employeeForm.reset();
   experiences = [];
+  removeErrorMessages();
 }
 function openProfileModal() {
   employeeProfileModal.style.display = "block";
 }
 function closeProfileModal() {
   employeeProfileModal.style.display = "none";
+}
+function closemodalAssignment(){
+  document.getElementById("closeAssignmentModalBtn").addEventListener("click",()=>{
+  zoneAssignmentModal.style.display = "none";
+  })
 }
 function ModalAddExperience() {
   let experiencesContainer = document.getElementById("experiencesContainer");
@@ -85,7 +167,6 @@ function displayExperience(experience) {
   contentExperience.appendChild(span);
   removespan(span);
 }
-
 function removespan(span) {
   span.querySelector(".remove-experience-btn").addEventListener("click", () => {
     setTimeout(() => span.remove(), 200);
@@ -106,32 +187,40 @@ function testTime(debut, fin) {
   }
 }
 function ModalAddEmployer(event = null) {
-  if(errorValidat()){
   if (event) event.preventDefault();
-  let inputs = employeeForm.querySelectorAll("input, select");
-  let newEmploye = {
-    id: Date.now(),
-    experiences: experiences,
-  };
-  console.log(experiences);
-  inputs.forEach((input) => {
-    if (input.name && input.name !== "experiences") {
-      newEmploye[input.name] = input.value;
-    }
-  });
-  saveData(newEmploye);
-  console.log(getData());
-  experiences = [];
-  displayWorker();
-  closeModalworker();
-   }else{
-    return;
-   }
+  if (errorValidat()) {
+    let inputs = employeeForm.querySelectorAll("input, select");
+    let newEmploye = {
+      id: Date.now(),
+      experiences: experiences,
+    };
+    console.log(experiences);
+    inputs.forEach((input) => {
+      if (input.name && input.name !== "experiences") {
+        newEmploye[input.name] = input.value;
+      }
+    });
+    saveData(newEmploye);
+    console.log(getData());
+    experiences = [];
+    displayWorker();
+    closeModalworker();
+  } else {
+    return false;
+  }
 }
 function displayPhoto(e) {
   let urlPhoto = e.target.value;
   let photoPreview = document.getElementById("photoPreview");
-  photoPreview.innerHTML = `<img src="${urlPhoto}" alt="profil">`;
+  if (
+    /^(https?:\/\/.*\.(jpg|jpeg|png|gif|webp)|.*\.(jpg|jpeg|png|gif|webp))$/i.test(
+      urlPhoto
+    )
+  ) {
+    photoPreview.innerHTML = `<img src="${urlPhoto}" alt="profil" onerror="this.style.display='none'">`;
+  } else {
+    photoPreview.innerHTML = `<p style="color: #666;">Aperçu de la photo</p>`;
+  }
 }
 
 function displayWorker() {
@@ -140,29 +229,68 @@ function displayWorker() {
     console.error("Element 'unassignedStaffList' non trouve");
     return;
   }
-  unassignedStaffList.innerHTML = "";
   const workers = getData();
   if (!workers || workers.length === 0) {
     unassignedStaffList.innerHTML = "<p>Aucun employe a afficher</p>";
     return;
   }
-  let employes = getData();
+ unassignedStaffList.innerHTML = "";
+   let employes=getData();
+  console.log(employes)
   employes.forEach((worker) => {
+   unassignedStaffList.appendChild(displaySpan(worker));
+  });
+  addEventListeners();
+}
+function displayCard(role){
+  zoneAssignmentModal.style.display = "block";
+  eligibleEmployeesList.innerHTML="";
+ let workers=getData();
+  let newWorkers=workers.filter((emp) => (emp.role).localeCompare(role));
+  console.log(newWorkers)
+  newWorkers.forEach((worker)=>{
+    eligibleEmployeesList.appendChild(assignmentSpan(worker));
+  });
+    addEventListeners();
+  closemodalAssignment();
+}
+function displaySpan(worker) {
     let divlist = document.createElement("div");
     divlist.className = "card-worker";
     divlist.innerHTML = `
   <div class="photo-preview"><img src="${worker.photo}" alt="${worker.name}"></div>
   <div class="name-preview"data-id='${worker.id}'><p>${worker.name}</p><p>${worker.role}</p></div>
   <div class="btn-card">
-  <button  class="btn-del-experience" id="deleteBtn"data-id='${worker.id}'><img width="30" height="25" src="https://img.icons8.com/ios-filled/50/remove-administrator.png" alt="remove-administrator"/></button> 
-   <button  class="btn-upd-experience" id="updateBtn"data-id='${worker.id}'><img width="30" height="25" src="https://img.icons8.com/ios-filled/50/edit-administrator.png" alt="edit-administrator"/></button></div>`;
-    // <img width="30" height="20" src="https://img.icons8.com/scribby/50/filled-trash.png" alt="filled-trash"/>
-    // <img width="30" height="20" src="https://img.icons8.com/fluency/48/edit-text-file.png" alt="edit-text-file"/>
-    unassignedStaffList.appendChild(divlist);
-  });
-  addEventListeners();
+  <button  class="btn-del-experience" id="deleteBtn"data-id='${worker.id}'><img width="30" height="20" src="https://img.icons8.com/scribby/50/filled-trash.png" alt="filled-trash"/></button> 
+   <button  class="btn-upd-experience" id="updateBtn"data-id='${worker.id}'><img width="30" height="20" src="https://img.icons8.com/fluency/48/edit-text-file.png" alt="edit-text-file"/></button></div>`;
+  return divlist;
+}
+function assignmentSpan(worker) {
+    let divlist = document.createElement("div");
+    divlist.className = "card-worker";
+    divlist.innerHTML = `
+  <div class="photo-preview"><img src="${worker.photo}" alt="${worker.name}"></div>
+  <div class="name-preview"data-id='${worker.id}'><p>${worker.name}</p><p>${worker.role}</p></div>
+  <div class="btn-card">
+   <button  class="btn-add-experience" id="addBtn"data-id='${worker.id}'><img width="24" height="24" src="https://img.icons8.com/softteal-gradient/24/add.png" alt="add"/></button>
+   </div>`;
+  return divlist;
+  
+}
+function addCardAssignment(workerId){
+  let employes = getData();
+  let newEpmloye = employes.find((emp) => emp.id == id);
 }
 function addEventListeners() {
+
+  document.querySelectorAll(".btn-add").forEach((button) => {
+    button.addEventListener("click", function () {
+      let btnAtrube=this.getAttribute("data-zone");
+      displayCard(btnAtrube);
+      console.log(btnAtrube);
+    });
+  });
+
   document.querySelectorAll(".name-preview").forEach((button) => {
     button.addEventListener("click", function () {
       const workerId = this.getAttribute("data-id");
@@ -180,6 +308,12 @@ function addEventListeners() {
     button.addEventListener("click", function () {
       const workerId = this.getAttribute("data-id");
       updateWorker(workerId);
+    });
+  });
+   document.querySelectorAll(".btn-add-experience").forEach((button) => {
+    button.addEventListener("click", function () {
+      const workerId = this.getAttribute("data-id");
+      addCardAssignment(workerId);
     });
   });
 }
@@ -247,8 +381,10 @@ function appInit() {
   let employeeForm = document.getElementById("employeeForm");
 
   employeeForm.addEventListener("submit", ModalAddEmployer);
-  addEmployerBtn.addEventListener("click", () => {
+
+  addEmployerBtn.addEventListener("click", (e) => {
     if (addEmployerBtn.innerHTML === "Modifier") {
+      e.preventDefault();
       ModalAddEmployer();
       deleteWorker(idMd);
       addEmployerBtn.innerHTML = "Ajouter l'employer";
@@ -270,9 +406,6 @@ function appInit() {
 
 console.log(getData());
 document.addEventListener("DOMContentLoaded", () => {
-  console.log(setTimeout(() => Date.now(), 0));
-  console.log(setTimeout(() => Date.now(), 0));
-  console.log(setTimeout(() => Date.now(), 0));
   displayWorker();
   appInit();
 });
