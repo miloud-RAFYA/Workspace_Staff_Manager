@@ -31,7 +31,7 @@
         <main class="main-content">
             <div class="office-grid">
                 <!-- Salle de conférence -->
-                 <div class="div1">
+                
                 <div class="zone conference-room" data-zone="conference">
                     <div class="zone-header">
                         <h3> Salle de conference</h3>
@@ -54,9 +54,9 @@
                         <!-- Employés de cette zone -->
                     </div>
                 </div>
-                </div>
-                <div class="div2">
-                    <div class="div3">
+               
+              
+   
                 <!-- Salle de sécurité -->
                 <div class="zone security-room required-zone" data-zone="security">
                     <div class="zone-header">
@@ -80,8 +80,7 @@
                     </div>
                 </div>
                
-                </div>
-                <div class="div4">
+ 
                  <!-- Salle du personnel -->
                 <div class="zone staff-room" data-zone="staff">
                     <div class="zone-header">
@@ -104,8 +103,7 @@
                         <!-- Employés de cette zone -->
                     </div>
                 </div>
-                </div>
-                </div>
+              
             </div>
         </main>
     </div>
@@ -121,25 +119,25 @@
             <form class="employee-form" id="employeeForm">
                 <div class="form-group">
                     <label for="employeeName">Nom complet </label>
-                    <input type="text" id="employeeName" name="name" required>
+                    <input type="text" id="employeeName" name="name" >
                 </div>
 
                 <div class="form-group">
                     <label for="employeeRole">Role </label>
-                    <select id="employeeRole" name="role" required>
+                    <select id="employeeRole" name="role" >
                         <option value="">Selectionnez un role</option>
                         <option value="manager">Manager</option>
-                        <option value="receptionist"> Receptionniste</option>
+                        <option value="Receptionniste"> Receptionniste</option>
                         <option value="technician"> Technicien IT</option>
                         <option value="security"> Agent de securite</option>
-                        <option value="cleaner">Nettoyage</option>
+                        <option value="Nettoyage">Nettoyage</option>
                         <option value="other">Autre</option>
                     </select>
                 </div>
 
                 <div class="form-group">
                     <label for="employeeEmail">Email </label>
-                    <input type="email" id="employeeEmail" name="email" required>
+                    <input type="email" id="employeeEmail" name="email" >
                 </div>
 
                 <div class="form-group">
@@ -149,7 +147,7 @@
 
                 <div class="form-group">
                     <label for="employeePhoto">Votre Photo</label>
-                    <input type="url" id="employeePhoto" name="photo" placeholder="https://example.com/photo.jpg">
+                    <input type="text"accept="image/*" id="employeePhoto" name="photo" placeholder="photo.jpg">
                     <div class="photo-preview" id="photoPreview">
 
                     </div>
@@ -159,19 +157,30 @@
                     <label>Experiences professionnelles</label>
                     <div class="experiences-container" id="experiencesContainer">
                         <div class="experience-input">
-                            <input type="text" name="experiences[]" placeholder="Ex: Developpeur Front-End - 2 ans">
-                             <button type="button" class="btn-add-experience" id="addExperienceBtn">Add</button>
+                            <div class="exeperience">
+                            <textarea  type="text" name="experiences" id="employeeexperiences"placeholder="Ex: Developpeur Front-End - 2 ans"></textarea>
+                            </div>
+                            <div class="date-experience">
+                            <div class="date-experience-start">
+                            <label for="date-exeperience-start">date debut</label>
+                            <input type="date"name="dateExeperienceStart"id="dateStart">
+                            </div>
+                            <div class="date-experience-end">
+                            <label for="date-exeperience-end">date fin</label>
+                            <input type="date"name="dateExeperienceEnd"id="dateEnd">
+                            </div>
+                            </div>
                         </div>
+                        <button type="button" class="btn-add-experience" id="addExperienceBtn">Ajouter Experience</button>
                         <div class="content-experience" id="content-experience">
-                            
+
                         </div>
                     </div>
                    
                 </div>
 
                 <div class="form-actions">
-                    <button type="button" class="btn btn-secondary" id="cancelBtn">Annuler</button>
-                    <button type="submit" class="btn btn-primary"id="addEmployerBtn">Ajouter l'employe</button>
+                    <button type="submit" class="btn btn-primary"id="addEmployerBtn">Ajouter</button>
                 </div>
             </form>
         </div>
@@ -181,15 +190,14 @@
     <div class="modal-overlay" id="employeeProfileModal">
         <div class="modal profile-modal">
             <div class="modal-header">
-                <h2 id="profileName">Profil Employé</h2>
+                <h2 id="profileName">Profil Employe</h2>
                 <button class="btn-close" id="closeProfileModalBtn">✕</button>
             </div>
 
             <div class="profile-content">
                 <div class="profile-photo">
-                    <img id="profilePhoto" src="" alt="Photo employé">
+                    <img id="profilePhoto" src="" alt="Photo employe">
                 </div>
-
                 <div class="profile-info">
                     <div class="info-item">
                         <strong>Rôle:</strong>
@@ -200,7 +208,7 @@
                         <span id="profileEmail"></span>
                     </div>
                     <div class="info-item">
-                        <strong>Téléphone:</strong>
+                        <strong>Telephone:</strong>
                         <span id="profilePhone"></span>
                     </div>
                     <div class="info-item">
@@ -210,14 +218,14 @@
                 </div>
 
                 <div class="profile-experiences">
-                    <h3>Expériences professionnelles</h3>
+                    <h3>Experiences professionnelles</h3>
                     <ul id="profileExperiences"></ul>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Modale de sélection d'employé pour une zone -->
+    <!-- Modale de sélection d'employe pour une zone -->
     <div class="modal-overlay" id="zoneAssignmentModal">
         <div class="modal assignment-modal">
             <div class="modal-header">
