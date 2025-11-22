@@ -7,20 +7,50 @@ let addEmployerBtn = document.getElementById("addEmployerBtn");
 let employeeProfileModal = document.getElementById("employeeProfileModal");
 let conferenceStaff = document.getElementById("conference-staff");
 let eligibleEmployeesList = document.getElementById("eligibleEmployeesList");
-let zoneAssignmentModal =document.getElementById("zoneAssignmentModal");
-console.log(eligibleEmployeesList)
+let zoneAssignmentModal = document.getElementById("zoneAssignmentModal");
+console.log(eligibleEmployeesList);
 // les varaibles main
 let btnAddZone = document.getElementsByClassName("btn-add");
-let containrZone={
-  
-}
+let containerZone = {
+  conference: [],
+  security: [],
+  staff: [],
+  reception: [],
+  server: [],
+  archive: [],
+};
+const ACCESS_RULES = {
+    'reception': ['Receptionniste', 'manager'],
+    'server': ['technician', 'manager'],
+    'security': ['security', 'manager'],
+    'archive': ['manager']
+};
 
+const ROLE_RESTRICTIONS = {
+    'Nettoyage': ['archive']
+};
+
+const ZONE_CAPACITIES = {
+    'conference': 8,
+    'reception': 2,
+    'server': 3,
+    'security': 4,
+    'staff': 6,
+    'archive': 2
+};
+var idMd;
 // les arrayers
 var workers = {};
 var experiences = [];
 const workerKy = "worker";
-
-var idMd;
+const dataZone = "dataZone";
+// localStorage.removeItem(dataZone);
+// localStorage.removeItem(workerKy);
+function initializeDataZone() {
+  if (!localStorage.getItem(dataZone)) {
+    localStorage.setItem(dataZone, JSON.stringify(containerZone));
+  }
+}
 function errorValidat() {
   const name = document.getElementById("employeeName");
   const role = document.getElementById("employeeRole");
@@ -35,7 +65,9 @@ function errorValidat() {
   removeErrorMessages();
   const validations = {
     name: /^[a-zA-ZÀ-ÿ\s\-']{2,50}$/.test(name.value.trim()),
-    role: /^(developer|designer|manager)$/.test(role.value),
+    role: /^(other|Nettoyage|security|technician|Receptionniste|manager)$/.test(
+      role.value
+    ),
     email: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email.value),
     photo:
       /^(https?:\/\/.*\.(jpg|jpeg|png|gif|webp)|.*\.(jpg|jpeg|png|gif|webp))$/i.test(
@@ -54,7 +86,6 @@ function errorValidat() {
   };
 
   let isValid = Object.values(validations).every((valid) => valid);
-
   if (isValid) {
     return true;
   } else {
@@ -91,8 +122,6 @@ function removeErrorMessages() {
   const errorMessages = document.querySelectorAll(".error-message");
   errorMessages.forEach((error) => error.remove());
 }
-// localStorage.removeItem(workerKy)
-// les cours des fonctions
 function getData() {
   let employe = localStorage.getItem(workerKy);
   return employe ? JSON.parse(employe) : [];
@@ -101,6 +130,49 @@ function saveData(employe) {
   let employes = getData();
   employes.push(employe);
   localStorage.setItem(workerKy, JSON.stringify(employes));
+}
+function getDataZone() {
+  initializeDataZone(); 
+  let employe = localStorage.getItem(dataZone);
+  return employe ? JSON.parse(employe) : containerZone;
+}
+function saveDataZone(data) {
+  localStorage.setItem(dataZone, JSON.stringify(data));
+}
+function canAssignToZone(workerRole, targetZone) {
+    if (workerRole === 'manager') return true;
+    if (ROLE_RESTRICTIONS[workerRole]?.includes(targetZone)) {
+        return false;
+    }
+    const allowedRoles = ACCESS_RULES[targetZone];
+    if (allowedRoles){
+        return allowedRoles.includes(workerRole);
+    } 
+    return true;
+}
+function isZoneFull(zoneId) {
+    const zones = getDataZone();
+    return zones[zoneId].length >= ZONE_CAPACITIES[zoneId];
+}
+function findEmployeeLocation(employeeId) {
+    const zones = getDataZone();
+    for (const [zoneName, employees] of Object.entries(zones)) {
+        if (employees.find(emp => emp.id == employeeId)) {
+            return getZoneDisplayName(zoneName);
+        }
+    }
+    return 'Non assigné';
+}
+function getZoneDisplayName(zoneId) {
+    const zoneNames = {
+        'conference': 'Salle de Conférence',
+        'reception': 'Réception', 
+        'server': 'Salle des Serveurs',
+        'security': 'Salle de Sécurité',
+        'staff': 'Salle du Personnel',
+        'archive': 'Salle d\'Archives'
+    };
+    return zoneNames[zoneId] || zoneId;
 }
 function openModalWorker() {
   let addEmployeeModal = (document.getElementById(
@@ -125,10 +197,12 @@ function openProfileModal() {
 function closeProfileModal() {
   employeeProfileModal.style.display = "none";
 }
-function closemodalAssignment(){
-  document.getElementById("closeAssignmentModalBtn").addEventListener("click",()=>{
-  zoneAssignmentModal.style.display = "none";
-  })
+function closemodalAssignment() {
+  document
+    .getElementById("closeAssignmentModalBtn")
+    .addEventListener("click", () => {
+      zoneAssignmentModal.style.display = "none";
+    });
 }
 function ModalAddExperience() {
   let experiencesContainer = document.getElementById("experiencesContainer");
@@ -222,42 +296,56 @@ function displayPhoto(e) {
     photoPreview.innerHTML = `<p style="color: #666;">Aperçu de la photo</p>`;
   }
 }
-
 function displayWorker() {
   let unassignedStaffList = document.getElementById("unassignedStaffList");
-  if (!unassignedStaffList) {
-    console.error("Element 'unassignedStaffList' non trouve");
-    return;
-  }
-  const workers = getData();
-  if (!workers || workers.length === 0) {
-    unassignedStaffList.innerHTML = "<p>Aucun employe a afficher</p>";
-    return;
-  }
- unassignedStaffList.innerHTML = "";
-   let employes=getData();
-  console.log(employes)
-  employes.forEach((worker) => {
-   unassignedStaffList.appendChild(displaySpan(worker));
-  });
-  addEventListeners();
-}
-function displayCard(role){
-  zoneAssignmentModal.style.display = "block";
-  eligibleEmployeesList.innerHTML="";
- let workers=getData();
-  let newWorkers=workers.filter((emp) => (emp.role).localeCompare(role));
-  console.log(newWorkers)
-  newWorkers.forEach((worker)=>{
-    eligibleEmployeesList.appendChild(assignmentSpan(worker));
-  });
+    const workers = getData();
+    const zones = getDataZone();
+    const assignedIds = new Set();
+    Object.values(zones).forEach(zoneEmployees => {
+        zoneEmployees.forEach(emp => assignedIds.add(emp.id));
+    });
+    
+    const unassignedWorkers = workers.filter(worker => !assignedIds.has(worker.id));
+
+    if (!unassignedWorkers || unassignedWorkers.length === 0) {
+        unassignedStaffList.innerHTML = "<p class='empty-zone'>Aucun employé non assigné</p>";
+        return;
+    }
+
+    unassignedStaffList.innerHTML = "";
+    unassignedWorkers.forEach((worker) => {
+        unassignedStaffList.appendChild(displaySpan(worker));
+    });
     addEventListeners();
-  closemodalAssignment();
+}
+function displayCardsWorker(role) {
+    zoneAssignmentModal.style.display = "block";
+    eligibleEmployeesList.innerHTML = "";
+    let workers = getData();
+    let zones = getDataZone();
+    const assignedIds = new Set();
+    console.log(assignedIds);
+    console.log(Object.values(zones));
+    Object.values(zones).forEach(zoneEmployees => {
+        zoneEmployees.forEach(emp => assignedIds.add(emp.id));
+    });
+    const eligibleWorkers = workers.filter(worker => 
+        !assignedIds.has(worker.id) && canAssignToZone(worker.role, role)
+    );
+    if (eligibleWorkers.length === 0) {
+        eligibleEmployeesList.innerHTML = "<p class='empty-zone'>Aucun employe eligible disponible</p>";
+    } else {
+        eligibleWorkers.forEach((worker) => {
+            eligibleEmployeesList.appendChild(assignmentSpan(worker, role));
+        });
+    }
+    addEventListeners();
+    closemodalAssignment();
 }
 function displaySpan(worker) {
-    let divlist = document.createElement("div");
-    divlist.className = "card-worker";
-    divlist.innerHTML = `
+  let divlist = document.createElement("div");
+  divlist.className = "card-worker";
+  divlist.innerHTML = `
   <div class="photo-preview"><img src="${worker.photo}" alt="${worker.name}"></div>
   <div class="name-preview"data-id='${worker.id}'><p>${worker.name}</p><p>${worker.role}</p></div>
   <div class="btn-card">
@@ -265,36 +353,134 @@ function displaySpan(worker) {
    <button  class="btn-upd-experience" id="updateBtn"data-id='${worker.id}'><img width="30" height="20" src="https://img.icons8.com/fluency/48/edit-text-file.png" alt="edit-text-file"/></button></div>`;
   return divlist;
 }
-function assignmentSpan(worker) {
-    let divlist = document.createElement("div");
-    divlist.className = "card-worker";
-    divlist.innerHTML = `
+function assignmentSpan(worker,role) {
+  let divlist = document.createElement("div");
+  divlist.className = "card-worker";
+  divlist.innerHTML = `
   <div class="photo-preview"><img src="${worker.photo}" alt="${worker.name}"></div>
   <div class="name-preview"data-id='${worker.id}'><p>${worker.name}</p><p>${worker.role}</p></div>
   <div class="btn-card">
-   <button  class="btn-add-experience" id="addBtn"data-id='${worker.id}'><img width="24" height="24" src="https://img.icons8.com/softteal-gradient/24/add.png" alt="add"/></button>
+   <button  class="btn-add-experience" role="${role}"data-id='${worker.id}'><img width="24" height="24" src="https://img.icons8.com/softteal-gradient/24/add.png" alt="add"/></button>
    </div>`;
   return divlist;
-  
 }
-function addCardAssignment(workerId){
+function assignmentZone(workers) {
+   let divlist = document.createElement("div");
+  divlist.className = "card-zone";
+  let worker = Array.isArray(workers) ? workers[0] : workers;
+  if (worker && worker.id) {
+  divlist.innerHTML = `
+  <div class="photo-zone"><img src="${worker.photo}" alt="${worker.name}"></div>
+  <div class="name-preview"data-id='${worker.id}'><p>${worker.name}</p><p>${worker.role}</p></div>
+  <div class="btn-card">
+   <button  class="btn-add-card"data-id='${worker.id}'>✕</button>
+   </div>`;
+  } else {
+    divlist.innerHTML = `<div class="empty-zone">Aucun employe</div>`;
+  }
+  addEventListeners()
+  return divlist;
+}
+function addCardAssignment(workerId, role) {
   let employes = getData();
-  let newEpmloye = employes.find((emp) => emp.id == id);
+  let employe = employes.find((emp) => emp.id == workerId);
+  if (!employe) {
+    console.error("Employe non trouve");
+    return;
+  }
+  if (!canAssignToZone(employe.role, role)) {
+        alert(` Les ${employe.role} ne peuvent pas être affectés à la ${getZoneDisplayName(role)}`);
+        return false;
+    }
+    if (isZoneFull(role)) {
+        alert(` La ${getZoneDisplayName(role)} est pleine (max: ${ZONE_CAPACITIES[role]} employés)`);
+        return false;
+    }
+  let zones = getDataZone();
+    Object.keys(zones).forEach(zone => {
+        zones[zone] = zones[zone].filter(emp => emp.id != workerId);
+    });
+
+    if (zones.hasOwnProperty(role)) {
+        zones[role].push(employe);
+        saveDataZone(zones);
+        updateZoneDisplay(role);
+        displayWorker(); // ==== AJOUT: Mettre à jour la liste non assignée
+        console.log(`Employé ${workerId} ajouté à la zone ${role}`);
+        return true;
+    } else {
+        console.error(`Zone ${role} non reconnue`);
+        return false;
+    }
+}
+function removeCardAssignment(workerId) {
+    let zones = getDataZone();
+    let employeeRemoved = false;
+    Object.keys(zones).forEach(zone => {
+        const initialLength = zones[zone].length;
+        zones[zone] = zones[zone].filter(emp => emp.id != workerId);
+        if (zones[zone].length !== initialLength) {
+            employeeRemoved = true;
+            updateZoneDisplay(zone);
+        }
+    });
+
+    if (employeeRemoved) {
+        saveDataZone(zones);
+        displayWorker(); 
+    }
+}
+function updateZoneDisplay(zoneId) {
+  let zones = getDataZone();
+  let zoneElement = document.getElementById(`${zoneId}-staff`);
+  if (zoneElement) {
+    zoneElement.innerHTML = '';
+    zones[zoneId].forEach(worker => {
+      const card = assignmentZone(worker);
+      zoneElement.appendChild(card);
+    });
+     let zoneCounter = document.querySelector(`[data-zone="${zoneId}"] .zone-counter`);
+        if (zoneCounter) {
+            zoneCounter.textContent = `${zones[zoneId].length}/${ZONE_CAPACITIES[zoneId]}`;
+        }
+    if (zones[zoneId].length === 0) {
+      const emptyMessage = document.createElement('div');
+      emptyMessage.className = 'empty-zone';
+      emptyMessage.textContent = 'Aucun employé affecté';
+      zoneElement.appendChild(emptyMessage);
+    }
+   
+  }
+
+}
+function updateAllZonesDisplay() {
+    const zones = ['conference', 'reception', 'server', 'security', 'staff', 'archive'];
+    zones.forEach(zone => updateZoneDisplay(zone));
 }
 function addEventListeners() {
-
   document.querySelectorAll(".btn-add").forEach((button) => {
     button.addEventListener("click", function () {
-      let btnAtrube=this.getAttribute("data-zone");
-      displayCard(btnAtrube);
-      console.log(btnAtrube);
+      let btnAtrube = this.getAttribute("data-zone");
+      displayCardsWorker(btnAtrube);
     });
   });
-
+  document.querySelectorAll(".zone-content").forEach((button) => {
+    button.addEventListener("click", function () {
+    updateAllZonesDisplay();
+    });
+  });
   document.querySelectorAll(".name-preview").forEach((button) => {
     button.addEventListener("click", function () {
       const workerId = this.getAttribute("data-id");
       displayProfil(workerId);
+    });
+  });
+  document.querySelectorAll(".name-zone").forEach((button) => {
+    button.addEventListener("click", function () {
+      const workerId = this.getAttribute("data-id");
+       const roleWorker = this.getAttribute("role");
+       console.log(roleWorker)
+      displayProfil(workerId,roleWorker);
     });
   });
   document.querySelectorAll(".btn-del-experience").forEach((button) => {
@@ -310,27 +496,49 @@ function addEventListeners() {
       updateWorker(workerId);
     });
   });
-   document.querySelectorAll(".btn-add-experience").forEach((button) => {
+  document.querySelectorAll(".btn-add-experience").forEach((button) => {
     button.addEventListener("click", function () {
       const workerId = this.getAttribute("data-id");
-      addCardAssignment(workerId);
+      const roleWorker = this.getAttribute("role");
+      addCardAssignment(workerId,roleWorker);
     });
   });
-}
 
-function deleteWorker(id) {
-  let conf = confirm("se vuex supprimer ce employe");
-  if (conf) {
-    let employes = getData();
+  document.querySelectorAll(".btn-add-card").forEach((button) => {
+        button.addEventListener("click", function (e) {
+            e.stopPropagation();
+            const workerId = this.getAttribute("data-id");
+            removeCardAssignment(workerId);
+        });
+    });
+
+    document.querySelectorAll(".btn-add").forEach((button) => {
+        button.addEventListener("click", function () {
+            let zone = this.getAttribute("data-zone");
+            if (!isZoneFull(zone)) {
+                displayCardsWorker(zone);
+            } else {
+                alert(`Cette zone est pleine (${ZONE_CAPACITIES[zone]} employés maximum)`);
+            }
+        });
+    });
+}
+function removeCard(id){
+ let employes = getData();
     let newEpmloyes = employes.filter((emp) => emp.id != id);
     console.log(newEpmloyes);
     localStorage.setItem(workerKy, JSON.stringify(newEpmloyes));
+    removeCardAssignment(id); 
     displayWorker();
+} 
+function deleteWorker(id) {
+  let conf = confirm("se vuex supprimer ce employe");
+  if (conf) {
+    removeCard(id)
   } else {
     return;
   }
 }
-
 function updateWorker(id) {
   openModalWorker();
   idMd = id;
@@ -349,33 +557,38 @@ function updateWorker(id) {
   });
   addEmployerBtn.innerHTML = "Modifier";
 }
-function displayProfil(id) {
+function displayProfil(id,role=null) {
   openProfileModal();
-  console.log(id);
-  let employes = getData();
-  console.log(employes);
-  let newEpmloye = employes.find((emp) => emp.id == id);
-  console.log(newEpmloye.name);
-  console.log(newEpmloye);
-  document.getElementById("profileName").innerHTML = newEpmloye.name;
-  document.getElementById("profileRole").innerHTML = newEpmloye.role;
-  document.getElementById("profileEmail").innerHTML = newEpmloye.email;
-  document.getElementById("profilePhone").innerHTML = newEpmloye.phone;
-  console.log(newEpmloye.photo);
-  document.getElementById("profilePhoto").src = newEpmloye.photo;
-  document.getElementById("dateStart").innerHTML =
-    newEpmloye.dateExeperienceStart;
-  document.getElementById("dateEnd").innerHTML = newEpmloye.dateExeperienceEnd;
-  let experience = document.getElementById("profileExperiences");
-  experience.innerHTML = "";
-  newEpmloye.experiences.forEach((exp) => {
-    let li = document.createElement("li");
-    li.innerHTML = `${exp}`;
-    experience.appendChild(li);
-    console.log(exp);
-  });
-}
+    let employes = getData();
+    let newEpmloye = employes.find((emp) => emp.id == id);
+    
+    if (!newEpmloye) {
+        let data = getDataZone();
+        // Chercher dans toutes les zones
+        for (const zone in data) {
+            newEpmloye = data[zone].find((emp) => emp.id == id);
+            if (newEpmloye) break;
+        }
+    }
 
+    if (newEpmloye) {
+        document.getElementById("profileName").innerHTML = newEpmloye.name;
+        document.getElementById("profileRole").innerHTML = newEpmloye.role;
+        document.getElementById("profileEmail").innerHTML = newEpmloye.email;
+        document.getElementById("profilePhone").innerHTML = newEpmloye.phone;
+        document.getElementById("profilePhoto").src = newEpmloye.photo;
+        // ==== AJOUT: Localisation actuelle ====
+        document.getElementById("profileLocation").textContent = findEmployeeLocation(id);
+        
+        let experience = document.getElementById("profileExperiences");
+        experience.innerHTML = "";
+        newEpmloye.experiences.forEach((exp) => {
+            let li = document.createElement("li");
+            li.innerHTML = `${exp}`;
+            experience.appendChild(li);
+        });
+    }
+}
 // la fonction principale
 function appInit() {
   let employeeForm = document.getElementById("employeeForm");
@@ -386,7 +599,7 @@ function appInit() {
     if (addEmployerBtn.innerHTML === "Modifier") {
       e.preventDefault();
       ModalAddEmployer();
-      deleteWorker(idMd);
+      removeCard(idMd);
       addEmployerBtn.innerHTML = "Ajouter l'employer";
     }
   });
@@ -398,14 +611,14 @@ function appInit() {
   closeModalBtn.addEventListener("click", closeModalworker);
 
   let inputPhoto = document.getElementById("employeePhoto");
-  inputPhoto.addEventListener("change", displayPhoto);
+  inputPhoto.addEventListener("input", displayPhoto);
 
   let addExperienceBtn = document.getElementById("addExperienceBtn");
   addExperienceBtn.addEventListener("click", ModalAddExperience);
 }
-
-console.log(getData());
 document.addEventListener("DOMContentLoaded", () => {
   displayWorker();
   appInit();
+  initializeDataZone();
+   updateAllZonesDisplay();
 });

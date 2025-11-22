@@ -681,7 +681,230 @@ textarea:focus {
   flex-direction: column;
   gap: var(--space-sm);
 }
+/* ===== CARTES ZONE ===== */
+.card-zone {
+  background: var(--white);
+  border: 1px solid var(--neutral-light);
+  border-radius: var(--radius-lg);
+  padding: var(--space-md);
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  transition: all 0.3s ease;
+  box-shadow: var(--shadow);
+  position: relative;
+  min-height: 80px;
+}
 
+.card-zone:hover {
+  box-shadow: var(--shadow-hover);
+  transform: translateY(-2px);
+  border-color: var(--primary-blue);
+}
+
+.photo-zone {
+  width: 50px;
+  height: 50px;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  flex-shrink: 0;
+  border: 2px solid var(--neutral-light);
+  background: var(--neutral-light);
+  transition: border-color 0.3s ease;
+}
+
+.card-zone:hover .photo-zone {
+  border-color: var(--primary-blue);
+}
+
+.photo-zone img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.name-zone {
+  flex: 1;
+  min-width: 0;
+}
+
+.name-zone p {
+  margin: 0;
+  line-height: 1.4;
+}
+
+.name-zone p:first-child {
+  font-weight: 600;
+  color: var(--neutral-dark);
+  font-size: var(--font-sm);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.name-zone p:last-child {
+  font-weight: 500;
+  color: var(--neutral-gray);
+  font-size: 0.75rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  background: var(--neutral-light);
+  padding: 2px var(--space-xs);
+  border-radius: var(--radius-sm);
+  display: inline-block;
+  margin-top: 4px;
+}
+
+.btn-card {
+  flex-shrink: 0;
+}
+
+.btn-add-card {
+  background: var(--danger);
+  color: var(--white);
+  border: none;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--font-sm);
+  font-weight: bold;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(220, 38, 38, 0.2);
+}
+
+.btn-add-card:hover {
+  background: var(--danger-hover);
+  transform: scale(1.1);
+  box-shadow: 0 4px 8px rgba(220, 38, 38, 0.3);
+}
+
+.btn-add-card:active {
+  transform: scale(0.95);
+}
+
+.empty-zone {
+  text-align: center;
+  color: var(--neutral-gray);
+  font-style: italic;
+  padding: var(--space-xl);
+  background: var(--neutral-light);
+  border-radius: var(--radius-md);
+  border: 2px dashed var(--neutral-light);
+  font-size: var(--font-sm);
+}
+
+/* Styles spécifiques aux zones */
+.zone-conference .card-zone {
+  border-left: 4px solid var(--conference-border);
+}
+
+.zone-reception .card-zone {
+  border-left: 4px solid var(--reception-border);
+}
+
+.zone-server .card-zone {
+  border-left: 4px solid var(--server-border);
+}
+
+.zone-security .card-zone {
+  border-left: 4px solid var(--security-border);
+}
+
+.zone-staff .card-zone {
+  border-left: 4px solid var(--staff-border);
+}
+
+.zone-archive .card-zone {
+  border-left: 4px solid var(--archive-border);
+}
+
+/* Animation d'apparition */
+@keyframes cardAppear {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.card-zone {
+  animation: cardAppear 0.3s ease-out;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .card-zone {
+    padding: var(--space-sm);
+    gap: var(--space-sm);
+  }
+  
+  .photo-zone {
+    width: 45px;
+    height: 45px;
+  }
+  
+  .name-zone p:first-child {
+    font-size: 0.8125rem;
+  }
+  
+  .name-zone p:last-child {
+    font-size: 0.6875rem;
+  }
+  
+  .btn-add-card {
+    width: 28px;
+    height: 28px;
+    font-size: 0.75rem;
+  }
+}
+
+/* États de drag & drop */
+.card-zone.dragging {
+  opacity: 0.6;
+  transform: scale(0.98);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+}
+
+.zone.drop-zone .card-zone {
+  border-color: var(--primary-blue);
+  background: rgba(37, 99, 235, 0.05);
+}
+
+/* Pour les zones avec contenu scrollable */
+.zone-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  max-height: 300px;
+  overflow-y: auto;
+  padding-right: var(--space-xs);
+}
+
+.zone-content::-webkit-scrollbar {
+  width: 4px;
+}
+
+.zone-content::-webkit-scrollbar-track {
+  background: var(--neutral-light);
+  border-radius: var(--radius-sm);
+}
+
+.zone-content::-webkit-scrollbar-thumb {
+  background: var(--neutral-gray);
+  border-radius: var(--radius-sm);
+}
+
+.zone-content::-webkit-scrollbar-thumb:hover {
+  background: var(--neutral-dark);
+}
 /* ===== RESPONSIVE ===== */
 @media (max-width: 1024px) {
   .app-container {
@@ -764,7 +987,47 @@ textarea:focus {
     padding: var(--space-md);
   }
 }
+/* ==== AJOUT: Compteurs de zones ==== */
+.zone-counter {
+    font-size: var(--font-sm);
+    color: var(--neutral-gray);
+    background: var(--white);
+    padding: 2px 8px;
+    border-radius: var(--radius-sm);
+    font-weight: 500;
+}
 
+.zone-full .zone-counter {
+    background: var(--danger);
+    color: var(--white);
+}
+
+.zone-full .btn-add {
+    display: none;
+}
+
+/* ==== AJOUT: Styles pour les restrictions ==== */
+.restricted-zone {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.restricted-zone .btn-add {
+    display: none;
+}
+
+/* ==== AJOUT: Amélioration responsive ==== */
+@media (max-width: 768px) {
+    .zone-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--space-xs);
+    }
+    
+    .zone-counter {
+        align-self: flex-start;
+    }
+}
 /* ===== ÉTATS SPÉCIAUX ===== */
 .zone.full {
   opacity: 0.7;
