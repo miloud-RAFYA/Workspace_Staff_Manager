@@ -17,6 +17,9 @@
             </div>
             <div class="unassigned-section">
                 <h2> Unassigned Staff</h2>
+                <div class="search-container">
+                    <input type="text" id="searchInput" placeholder="Rechercher un employe par nom ou role">
+                </div>
                 <button class="btn btn-primary" id="addWorkerBtn">
                     <img width="32" height="32" src="https://img.icons8.com/windows/32/add--v1.png" alt="add--v1" />
                     Add New Worker
@@ -31,7 +34,7 @@
         <main class="main-content">
             <div class="office-grid">
                 <!-- Salle de conférence -->
-                
+
                 <div class="zone conference-room" data-zone="conference">
                     <div class="zone-header">
                         <h3> Salle de conference</h3>
@@ -48,7 +51,7 @@
                 <div class="zone reception required-zone" data-zone="reception">
                     <div class="zone-header">
                         <h3> Reception</h3>
-                         <span class="zone-counter">1/2</span>
+                        <span class="zone-counter">1/2</span>
                         <button class="btn-add" data-zone="reception"> <img width="32" height="32"
                                 src="https://img.icons8.com/windows/32/add--v1.png" alt="add--v1" /> </button>
                     </div>
@@ -56,14 +59,14 @@
                         <!-- Employés de cette zone -->
                     </div>
                 </div>
-               
-              
-   
+
+
+
                 <!-- Salle de sécurité -->
                 <div class="zone security-room required-zone" data-zone="security">
                     <div class="zone-header">
                         <h3>Salle de sécurité</h3>
-                         <span class="zone-counter">1/4</span>
+                        <span class="zone-counter">1/4</span>
                         <button class="btn-add" data-zone="security"> <img width="32" height="32"
                                 src="https://img.icons8.com/windows/32/add--v1.png" alt="add--v1" /></button>
                     </div>
@@ -71,11 +74,11 @@
                         <!-- Employés de cette zone -->
                     </div>
                 </div>
-                  <!-- Salle des serveurs -->
+                <!-- Salle des serveurs -->
                 <div class="zone server-room" data-zone="server">
                     <div class="zone-header">
                         <h3>Salle des serveurs</h3>
-                         <span class="zone-counter">1/3</span>
+                        <span class="zone-counter">1/3</span>
                         <button class="btn-add" data-zone="server"> <img width="32" height="32"
                                 src="https://img.icons8.com/windows/32/add--v1.png" alt="add--v1" /></button>
                     </div>
@@ -83,13 +86,13 @@
                         <!-- Employés de cette zone -->
                     </div>
                 </div>
-               
- 
-                 <!-- Salle du personnel -->
+
+
+                <!-- Salle du personnel -->
                 <div class="zone staff-room" data-zone="staff">
                     <div class="zone-header">
                         <h3>Salle du personnel</h3>
-                         <span class="zone-counter">0/6</span>
+                        <span class="zone-counter">0/6</span>
                         <button class="btn-add" data-zone="staff"> <img width="32" height="32"
                                 src="https://img.icons8.com/windows/32/add--v1.png" alt="add--v1" /></button>
                     </div>
@@ -101,7 +104,7 @@
                 <div class="zone archive-room" data-zone="archive">
                     <div class="zone-header">
                         <h3>Salle d'archives</h3>
-                         <span class="zone-counter">1/2</span>
+                        <span class="zone-counter">1/2</span>
                         <button class="btn-add" data-zone="archive"> <img width="32" height="32"
                                 src="https://img.icons8.com/windows/32/add--v1.png" alt="add--v1" /></button>
                     </div>
@@ -109,7 +112,7 @@
                         <!-- Employés de cette zone -->
                     </div>
                 </div>
-              
+
             </div>
         </main>
     </div>
@@ -125,12 +128,12 @@
             <form class="employee-form" id="employeeForm">
                 <div class="form-group">
                     <label for="employeeName">Nom complet </label>
-                    <input type="text" id="employeeName" name="name" >
+                    <input type="text" id="employeeName" name="name">
                 </div>
 
                 <div class="form-group">
                     <label for="employeeRole">Role </label>
-                    <select id="employeeRole" name="role" >
+                    <select id="employeeRole" name="role">
                         <option value="">Selectionnez un role</option>
                         <option value="manager">Manager</option>
                         <option value="Receptionniste"> Receptionniste</option>
@@ -143,7 +146,7 @@
 
                 <div class="form-group">
                     <label for="employeeEmail">Email </label>
-                    <input type="email" id="employeeEmail" name="email" >
+                    <input type="email" id="employeeEmail" name="email">
                 </div>
 
                 <div class="form-group">
@@ -153,7 +156,7 @@
 
                 <div class="form-group">
                     <label for="employeePhoto">Votre Photo</label>
-                    <input type="text"accept="image/*" id="employeePhoto" name="photo" placeholder="photo.jpg">
+                    <input type="text" accept="image/*" id="employeePhoto" name="photo" placeholder="photo.jpg">
                     <div class="photo-preview" id="photoPreview">
 
                     </div>
@@ -164,29 +167,31 @@
                     <div class="experiences-container" id="experiencesContainer">
                         <div class="experience-input">
                             <div class="exeperience">
-                            <textarea  type="text" name="experiences" id="employeeexperiences"placeholder="Ex: Developpeur Front-End - 2 ans"></textarea>
+                                <textarea type="text" name="experiences" id="employeeexperiences"
+                                    placeholder="Ex: Developpeur Front-End - 2 ans"></textarea>
                             </div>
                             <div class="date-experience">
-                            <div class="date-experience-start">
-                            <label for="date-exeperience-start">date debut</label>
-                            <input type="date"name="dateExeperienceStart"id="dateStart">
-                            </div>
-                            <div class="date-experience-end">
-                            <label for="date-exeperience-end">date fin</label>
-                            <input type="date"name="dateExeperienceEnd"id="dateEnd">
-                            </div>
+                                <div class="date-experience-start">
+                                    <label for="date-exeperience-start">date debut</label>
+                                    <input type="date" name="dateExeperienceStart" id="dateStart">
+                                </div>
+                                <div class="date-experience-end">
+                                    <label for="date-exeperience-end">date fin</label>
+                                    <input type="date" name="dateExeperienceEnd" id="dateEnd">
+                                </div>
                             </div>
                         </div>
-                        <button type="button" class="btn-add-experience" id="addExperienceBtn">Ajouter Experience</button>
+                        <button type="button" class="btn-add-experience" id="addExperienceBtn">Ajouter
+                            Experience</button>
                         <div class="content-experience" id="content-experience">
 
                         </div>
                     </div>
-                   
+
                 </div>
 
                 <div class="form-actions">
-                    <button type="submit" class="btn btn-primary"id="addEmployerBtn">Ajouter</button>
+                    <button type="submit" class="btn btn-primary" id="addEmployerBtn">Ajouter</button>
                 </div>
             </form>
         </div>
@@ -219,7 +224,7 @@
                     </div>
                     <div class="info-item">
                         <strong>Localisation actuelle:</strong>
-                       <span id="profileLocation">Non assigné</span>
+                        <span id="profileLocation">Non assigné</span>
                     </div>
                 </div>
 
