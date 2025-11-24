@@ -122,7 +122,7 @@ body {
   margin-top: var(--space-md);
 }
 /* Styles manquants pour .card-worker */
-.search-container input{
+.search-container input {
   padding: 14px;
   width: 100%;
   margin-bottom: 10px;
@@ -475,6 +475,9 @@ body {
   right: 0;
   bottom: 0;
   background: rgba(0, 0, 0, 0.5);
+  /* display: grid;
+  place-content: center;
+  place-items: center; */
   display: none;
   align-items: center;
   justify-content: center;
@@ -501,7 +504,7 @@ body {
 @keyframes modalSlideIn {
   from {
     opacity: 0;
-    transform: translateY(-20px);
+    transform: translateY(-200px);
   }
   to {
     opacity: 1;
